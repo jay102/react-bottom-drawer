@@ -4,10 +4,7 @@ import { useSwipeable } from "react-swipeable";
 import { Transition } from "react-transition-group";
 import useEscButton from "./lib/hooks/useEscButton";
 import usePreventScroll from "./lib/hooks/usePreventScroll";
-import {
-  BackdropStyles,
-  TransitionStyles,
-} from "./lib/styles";
+import { BackdropStyles, TransitionStyles } from "./lib/styles";
 import useGlobalStyles from "./lib/hooks/useGlobalStyles";
 
 interface IProps {
@@ -18,6 +15,7 @@ interface IProps {
   unmountOnExit?: boolean;
   mountOnEnter?: boolean;
   children: React.ReactNode;
+  drawerClassName?: string;
 }
 
 const SlideUpTransition = ({
@@ -28,10 +26,11 @@ const SlideUpTransition = ({
   mountOnEnter = true,
   duration = 250,
   hideScrollbars = false,
+  drawerClassName,
 }: IProps) => {
   const classNames = useGlobalStyles(duration, hideScrollbars);
   const nodeRef = React.useRef(null);
-  
+
   // Actions to close
   useEscButton(onClose, isVisible);
   usePreventScroll(isVisible, classNames.contentWrapper);
@@ -78,9 +77,15 @@ const SlideUpTransition = ({
       >
         {(state) => (
           <div ref={nodeRef}>
-            <div onClick={onClose} className={classNames.backdrop} style={BackdropStyles[state]} />
             <div
-            className={classNames.drawer}
+              onClick={onClose}
+              className={classNames.backdrop}
+              style={BackdropStyles[state]}
+            />
+            <div
+              className={`${classNames.drawer} ${
+                drawerClassName ? drawerClassName : ""
+              }`}
               style={{
                 ...TransitionStyles[state],
                 ...getTransforms(),
